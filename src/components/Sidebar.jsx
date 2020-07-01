@@ -34,7 +34,7 @@ class Sidebar extends Component {
         this.rendergridBody = this.renderGridBody.bind(this);
         this.renderDays = this.renderDays.bind(this);
         this.handleStartDateChange = this.handleStartDateChange.bind(this);
-        // this.handleEndDateChange = 
+        // this.handleEndDateChange =
     }
 
     componentDidMount() {
@@ -56,16 +56,14 @@ class Sidebar extends Component {
     };
 
     renderDays() {
-        // let daysGone = Math.round((this.state.endDate.getTime()
         let endDate = this.state.endDate.getTime();
-        //   - this.state.startDate.getTime()) / (1000 * 3600 * 24));
         let daysGone = Math.round(
             (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
         );
 
         const tableEntries = [];
         for (let i = 0; i < daysGone; i++) {
-            tableEntries.push(<th>{i}</th>);
+            tableEntries.push(<th key={i}>{i}</th>);
         }
         return (
             <tr>
@@ -87,36 +85,26 @@ class Sidebar extends Component {
 
     renderGridBody() {
         let { persons } = this.state;
-        console.log(persons[0])
-        let p1 = persons[0];
         const toPrint = [];
-        let days = [];
 
         let daysGone = Math.round(
             (this.state.endDate.getTime() - this.state.startDate.getTime()) /
                 (1000 * 3600 * 24)
         );
 
-        for (let i = 0; i < daysGone; i++) {
-            if (i < p1.daysGone) {
-                days.push(<td className="cell-going"></td>);
-
-            } else {
-
-                days.push(<td onClick={this.changeDaysGoing}></td>);
-            }
-        }
-
+        let i = 0;
         const gridRows = persons.map((person) => {
             toPrint.push(
-                <GridRow daysGone={
-                    person.daysGone
-                } name={person.name} totalDays={daysGone}></GridRow>
+                <GridRow
+                    key={i++}
+                    daysGone={person.daysGone}
+                    name={person.name}
+                    totalDays={daysGone}
+                ></GridRow>
             );
         });
+
         return toPrint;
-
-
     }
 
     addDay() {
@@ -147,9 +135,7 @@ class Sidebar extends Component {
                 <div className="container">
                     <Table striped bordered hover variant="light">
                         <thead>{this.renderDays()}</thead>
-                        <tbody>
-                            {this.renderGridBody()}
-                        </tbody>
+                        <tbody>{this.renderGridBody()}</tbody>
                     </Table>
                 </div>
             </div>
