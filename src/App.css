@@ -1,3 +1,10 @@
+/* @import  */
+body {
+  background-image: url(./assets/imgs/jurney-bg.jpg);
+  background-size: cover;
+}
+
+
 .App {
   text-align: center;
 }
