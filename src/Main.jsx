@@ -14,15 +14,15 @@ class Main extends Component {
         persons: [
             {
                 name: 'Cassady',
-                daysGone: 3,
+                daysGone: 5,
             },
             {
                 name: 'Cherry',
-                daysGone: 3,
+                daysGone: 5,
             },
             {
                 name: 'Sam',
-                daysGone: 2,
+                daysGone: 3,
             },
         ],
     };
@@ -118,6 +118,8 @@ class Main extends Component {
                 (1000 * 3600 * 24)
         );
 
+        let {persons} = this.state;
+
         return (
             <div >
                 <h1>Jurney</h1>
@@ -140,7 +142,7 @@ class Main extends Component {
                     </Table>
                 </div>
                 <div className="container money-form">
-                    <MoneyForm/>
+                    <MoneyForm persons={persons} daysGone={daysGone}/>
                 </div>
             </div>
         );

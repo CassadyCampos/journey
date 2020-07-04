@@ -1,0 +1,12 @@
+cassady = 3 / 5
+
+cherry = 3 / 5
+
+sam = 2 / 5
+
+total was 1000 
+
+samAmt = 1000$ / 3 people * 3/5 days 
+
+1000 - samAmt = 800$
+

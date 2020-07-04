@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true
+    },
+
+    "parserOptions": {
+          "ecmaFeatures": {
+            "legacyDecorators": true
+          }
+    }
+
+}
