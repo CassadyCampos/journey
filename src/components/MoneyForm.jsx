@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import '../assets/styles/MoneyForm.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { fr } from 'date-fns/esm/locale';
-import { formatISO9075 } from 'date-fns';
 
 export default class MoneyForm extends Component {
     constructor(props) {
@@ -19,7 +17,15 @@ export default class MoneyForm extends Component {
         this.handleTotalChange = this.handleTotalChange.bind(this);
     }
     
+    clearState() {
+        this.setState({total: 0})
+        this.props.persons.forEach(person => {
+            person.owes = 0;
+        })
+    }
+
     handleSubmit() {
+        this.clearState();
         this.calculateSplit();
         this.setState({renderBreakdown: true})
     }

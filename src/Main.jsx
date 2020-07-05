@@ -36,6 +36,7 @@ class Main extends Component {
         this.rendergridBody = this.renderGridBody.bind(this);
         this.renderDays = this.renderDays.bind(this);
         this.handleStartDateChange = this.handleStartDateChange.bind(this);
+        this.addPerson = this.addPerson.bind(this);
         // this.handleEndDateChange =
     }
 
@@ -106,6 +107,20 @@ class Main extends Component {
             );
         });
 
+        toPrint.push(
+            <tr key={"AddRow"}>
+                <td>
+                <button
+                        onClick={this.addPerson}
+                        type="button"
+                        className="btn btn-light"
+                    >
+                        Add Person
+                    </button>
+                </td>
+            </tr>
+        )
+
         return toPrint;
     }
 
@@ -113,6 +128,20 @@ class Main extends Component {
         let { endDate } = this.state;
         let set = new Date(endDate.setDate(endDate.getDate() + 1));
         this.setState({ endDate: set });
+    }
+
+    addPerson() {
+        let {persons} = this.state; 
+        let person = {
+            name: "New person",
+            daysGone: [],
+            owes: 0
+        };
+        const list = [...persons, person]
+
+        this.setState({persons: list}
+            );
+        console.log(this.state.persons);
     }
 
     render() {

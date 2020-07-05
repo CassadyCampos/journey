@@ -5,10 +5,42 @@ class GridRow extends Component {
     
     constructor(props) {
         super(props);
+
+        this.state={
+            name: this.props.name,
+            editName: false
+        }
+
+        this.editName  = this.editName.bind(this);
+        this.handleNameChange = this.handleNameChange.bind(this);
+        this.renderEditName = this.renderEditName.bind(this);   
+    }
+
+    editName() {
+        this.setState({editName: true})
+    }
+
+    handleNameChange(e) {
+        this.setState({name: e.target.value})
+    }
+
+    renderEditName() {
+        return (
+            <div>
+                <input value={this.state.name}
+                onChange={this.handleNameChange}></input> 
+                <button onClick={() => {
+                    this.setState({editName: false, name: this.state.name})
+                }}
+                type="button" class="btn btn-success">Y</button>
+            </div>
+        )
+
     }
 
     render() {
-        let {daysGone, name, totalDays} = this.props;
+        let {daysGone, totalDays} = this.props;
+        let {name, editName} = this.state;
 
         const toPrint = [];
         let days = [];
@@ -23,7 +55,18 @@ class GridRow extends Component {
 
         toPrint.push(
             <tr key={name}>
-                <td>{name}: {daysGone}</td>
+                {editName ? 
+                            <div>
+                            <input value={this.state.name}
+                            onChange={this.handleNameChange}></input> 
+                            <button onClick={() => {
+                                this.setState({editName: false})
+                            }}
+                            type="button" className="btn btn-success">Y</button>
+                        </div>
+                : 
+                <td onDoubleClick={this.editName}>{name}: {daysGone}</td>
+                }
                 {days}
             </tr>
         )
