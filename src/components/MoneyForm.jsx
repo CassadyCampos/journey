@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import '../assets/styles/MoneyForm.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { isThisSecond } from 'date-fns';
+import { fr } from 'date-fns/esm/locale';
+import { formatISO9075 } from 'date-fns';
 
 export default class MoneyForm extends Component {
     constructor(props) {
@@ -11,6 +12,7 @@ export default class MoneyForm extends Component {
         this.state = {
             pricesOwed: '',
             total: '',
+            renderBreakdown: false
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -19,6 +21,7 @@ export default class MoneyForm extends Component {
     
     handleSubmit() {
         this.calculateSplit();
+        this.setState({renderBreakdown: true})
     }
 
     handleTotalChange(e) {
@@ -43,33 +46,38 @@ export default class MoneyForm extends Component {
         let pricesOwed = [];
         let { persons, daysGone } = this.props; 
         let { total } = this.state;
-        persons.sort((p1, p2) => {
-            return ((p1.daysGone / daysGone) * total) - (p2.daysGone / daysGone) * total;
-        });
-        console.log(persons);
+        
+        let pricePerNight = total / daysGone;
+        console.log(pricePerNight);
 
-        // while(persons.length > 0) {
-        //     let popFront = persons.slice(0, 1).shift();
-        //     console.log(popFront);
-        // }
-        while (count > 0){
-            var d = persons[0]
-            var similarPpl = persons.filter((person) => {
-                return person.daysGone == d.daysGone;
+        // process through each day
+        for(let i = 0; i < daysGone; i++) {
+            let pplIndexPresent = [];
+
+            console.log(persons);
+
+            for(let j = 0; j < persons.length; j++) {
+                
+                console.log("day: " + (i));
+                // means this person was present that day
+                let res = persons[j].daysGone.includes(i+1);
+                if (res) {
+                    pplIndexPresent.push(j);
+                }
+            }
+
+            // calculate for day
+            pplIndexPresent.forEach(index => {
+                // add this night calculation
+                // persons[index] =  {...persons[index],...{"owes": owes += pricePerNight / pplIndexPresent.length}};
+                // console.log(pricePerNight / pplIndexPresent.length)
+                console.log(index);
+                persons[index].owes += (pricePerNight / pplIndexPresent.length);
             })
-
-             let owed = total / (similarPpl.length + 1) * (persons[0].daysGone / daysGone) 
-            persons[0] = {... persons[0], ...{owed: owed}};
-            console.log(persons[0]);
-            var front = persons.slice(1);
-            count--;
         }
 
-        this.setState({ pricesOwed: pricesOwed });
-    }
-
-    renderRes() {
-        return <div>test</div>;
+        console.log(persons);
+        // this.setState({ pricesOwed: pricesOwed });
     }
 
     renderBreakdown() {
@@ -80,7 +88,7 @@ export default class MoneyForm extends Component {
         for (let i = 0; i < persons.length; i++) {
             renderReturn.push(
                 <div key={i}>
-                    {persons[i].name}: {pricesOwed[i]}
+                    {persons[i].name}: {persons[i].owes.toFixed(2)}
                 </div>
             )
         }
@@ -89,6 +97,7 @@ export default class MoneyForm extends Component {
     }
 
     render() {
+        let {renderBreakdown} = this.state;
         return (
             <div className="container-form">
                 <div className="container">
@@ -123,7 +132,7 @@ export default class MoneyForm extends Component {
                         <h5 className="card-header">Split Breakdown</h5>
                         <div className="card-body">
                             {/* <h5 class="card-title">Special title treatment</h5> */}
-                            {this.renderBreakdown()}
+                            {renderBreakdown? this.renderBreakdown() : '' }
                         </div>
                     </div>
                     <div></div>

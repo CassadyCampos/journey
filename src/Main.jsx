@@ -14,15 +14,18 @@ class Main extends Component {
         persons: [
             {
                 name: 'Cassady',
-                daysGone: 5,
+                daysGone: [1,2,3,4,5],
+                owes: 0
             },
             {
                 name: 'Cherry',
-                daysGone: 5,
+                daysGone: [1,2,3,4,5],
+                owes: 0
             },
             {
                 name: 'Sam',
-                daysGone: 3,
+                daysGone: [1,2,3,4],
+                owes: 0
             },
         ],
     };

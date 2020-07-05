@@ -1,12 +1,17 @@
-cassady = 3 / 5
+cas 5 
+cher 5 
+sam 4 
+bob 4
 
-cherry = 3 / 5
 
-sam = 2 / 5
+total 1000 
 
-total was 1000 
+200$ a night
 
-samAmt = 1000$ / 3 people * 3/5 days 
+200 / 4
 
-1000 - samAmt = 800$
-
+50 50 
+50 50  
+50
+50
+50

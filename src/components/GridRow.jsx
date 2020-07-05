@@ -14,7 +14,7 @@ class GridRow extends Component {
         let days = [];
 
         for (let i = 0; i < totalDays; i++) {
-            if (i < daysGone) {
+            if (i+1 == daysGone[i]) {
                 days.push(<td key={i} className="cell-going"></td>)
             } else {
                 days.push(<td key={i}></td>)
