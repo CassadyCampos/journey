@@ -37,7 +37,6 @@ class Main extends Component {
         this.renderDays = this.renderDays.bind(this);
         this.handleStartDateChange = this.handleStartDateChange.bind(this);
         this.addPerson = this.addPerson.bind(this);
-        // this.handleEndDateChange =
     }
 
     componentDidMount() {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import "../assets/styles/GridRow.css";
+import Form from 'react-bootstrap/Form';
 
 class GridRow extends Component {
     
@@ -21,24 +22,28 @@ class GridRow extends Component {
     }
 
     handleNameChange(e) {
+        console.log(e.target.value);
         this.setState({name: e.target.value})
     }
 
     renderEditName() {
         return (
-            <div>
-                <input value={this.state.name}
+            <td>
+                <input 
+                type="text"
+                value={this.state.name}
                 onChange={this.handleNameChange}></input> 
                 <button onClick={() => {
                     this.setState({editName: false, name: this.state.name})
                 }}
-                type="button" class="btn btn-success">Y</button>
-            </div>
+                type="button" className="btn btn-success">Y</button>
+            </td>
         )
 
     }
 
     render() {
+        console.log("pass");
         let {daysGone, totalDays} = this.props;
         let {name, editName} = this.state;
 
@@ -53,17 +58,11 @@ class GridRow extends Component {
             }
         }
 
+        let i = 0;
         toPrint.push(
-            <tr key={name}>
+            <tr key={i++}>
                 {editName ? 
-                            <div>
-                            <input value={this.state.name}
-                            onChange={this.handleNameChange}></input> 
-                            <button onClick={() => {
-                                this.setState({editName: false})
-                            }}
-                            type="button" className="btn btn-success">Y</button>
-                        </div>
+                            this.renderEditName()
                 : 
                 <td onDoubleClick={this.editName}>{name}: {daysGone}</td>
                 }
