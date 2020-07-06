@@ -37,6 +37,11 @@ class Main extends Component {
         this.renderDays = this.renderDays.bind(this);
         this.handleStartDateChange = this.handleStartDateChange.bind(this);
         this.addPerson = this.addPerson.bind(this);
+        this.myCallback = this.myCallback.bind(this);
+    }
+
+    myCallback(dataFromChild) {
+        console.log(dataFromChild);
     }
 
     componentDidMount() {
@@ -99,6 +104,7 @@ class Main extends Component {
             toPrint.push(
                 <GridRow
                     key={i++}
+                    callbackFromParent={this.myCallback}
                     daysGone={person.daysGone}
                     name={person.name}
                     totalDays={daysGone}
