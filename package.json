@@ -16,7 +16,8 @@
     "react-date-range": "^1.0.3",
     "react-datepicker": "^3.0.0",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "rsuite": "^4.7.5"
   },
   "scripts": {
     "start": "react-scripts start",

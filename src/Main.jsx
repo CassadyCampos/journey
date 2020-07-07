@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
 import DatePicker from 'react-datepicker';
 import GridRow from './components/GridRow';
 import 'react-datepicker/dist/react-datepicker.css';
 import './assets/styles/Main.css';
-import MoneyForm from "./components/MoneyForm"
+import MoneyForm from './components/MoneyForm';
+import { DateRangePicker, Button } from 'rsuite';
+import 'rsuite/dist/styles/rsuite-default.css'; // or ''
 
 class Main extends Component {
     state = {
@@ -15,20 +16,20 @@ class Main extends Component {
             {
                 name: 'Cassady',
                 daysGone: [],
-                owes: 0
+                owes: 0,
             },
             {
                 name: 'Cherry',
                 daysGone: [],
-                owes: 0
+                owes: 0,
             },
             {
                 name: 'Sam',
                 daysGone: [],
-                owes: 0
+                owes: 0,
             },
         ],
-        daysGone: 0
+        daysGone: 0,
     };
 
     constructor(props) {
@@ -36,54 +37,57 @@ class Main extends Component {
         this.addDay = this.addDay.bind(this);
         this.rendergridBody = this.renderGridBody.bind(this);
         this.renderDays = this.renderDays.bind(this);
-        this.handleStartDateChange = this.handleStartDateChange.bind(this);
         this.addPerson = this.addPerson.bind(this);
+        this.setDates = this.setDates.bind(this);
         this.myCallback = this.myCallback.bind(this);
     }
 
     myCallback(personIndex, index, isActive) {
-        let {persons} = this.state;
+        let { persons } = this.state;
 
         console.log(personIndex);
         let shallowCopy = persons[personIndex];
 
-        isActive && !shallowCopy.daysGone.includes(index) ? 
-            shallowCopy.daysGone.push(index) 
-        :
-        shallowCopy.daysGone.splice(index, 1);
+        isActive && !shallowCopy.daysGone.includes(index)
+            ? shallowCopy.daysGone.push(index)
+            : shallowCopy.daysGone.splice(index, 1);
 
         persons[personIndex] = shallowCopy;
-        this.setState({persons: persons});
+        this.setState({ persons: persons });
         console.log(persons);
     }
 
     componentDidMount() {
         let { endDate } = this.state;
-        let set = new Date(endDate.setDate(endDate.getDate() + 5));
-        let daysGone = Math.round(
-            (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
-        ) + 1;
-        this.setState({ endDate: set, daysGone: daysGone});
+        let set = new Date(endDate.setDate(endDate.getDate()));
+        let daysGone =
+            Math.round(
+                (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
+            ) + 1;
+        this.setState({ endDate: set, daysGone: daysGone });
     }
 
-    handleStartDateChange = (date) => {
-        this.setState({
-            startDate: date,
-        });
-    };
+    setDates(dates) {
+        console.log(dates);
+        let {persons} = this.state;
 
-    handleEndDateChange = (date) => {
         this.setState({
-            endDate: date,
-        });
-    };
+            startDate: dates[0],
+            endDate: dates[1],
+            daysGone: Math.round((this.state.endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)) + 1
+        }, () => {
+            for(let i = 0; i < this.state.daysGone; i++) {
+                for(let j = 0; j < persons.length; j++) {
+                    persons[j].daysGone.push(i);
+                }
+            }
+            console.log(persons);
+            this.componentDidMount();
+        })
+    }
 
     renderDays() {
-        let endDate = this.state.endDate.getTime();
-        // let daysGone = Math.round(
-        //     (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
-        // );
-        let {daysGone} = this.state;
+        let { daysGone } = this.state;
 
         const tableEntries = [];
         for (let i = 0; i < daysGone; i++) {
@@ -107,15 +111,15 @@ class Main extends Component {
         );
     }
 
-    renderGridBody() {
-        let { persons, daysGone} = this.state;
+    renderGridBody() {  
+        let { persons, daysGone } = this.state;
         const toPrint = [];
 
         let i = 0;
         const gridRows = persons.map((person) => {
             toPrint.push(
                 <GridRow
-                    key={i++}   
+                    key={i++}
                     personIndex={i - 1}
                     callbackFromParent={this.myCallback}
                     daysGone={person.daysGone}
@@ -126,9 +130,9 @@ class Main extends Component {
         });
 
         toPrint.push(
-            <tr key={"AddRow"}>
+            <tr key={'AddRow'}>
                 <td>
-                <button
+                    <button
                         onClick={this.addPerson}
                         type="button"
                         className="btn btn-light"
@@ -137,7 +141,7 @@ class Main extends Component {
                     </button>
                 </td>
             </tr>
-        )
+        );
 
         return toPrint;
     }
@@ -149,44 +153,42 @@ class Main extends Component {
     }
 
     addPerson() {
-        let {persons} = this.state; 
+        let { persons } = this.state;
         let person = {
-            name: "New person",
+            name: 'New person',
             daysGone: [],
-            owes: 0
+            owes: 0,
         };
-        const list = [...persons, person]
+        const list = [...persons, person];
 
-        this.setState({persons: list}
-            );
+        this.setState({ persons: list });
         console.log(this.state.persons);
     }
 
     render() {
-        let daysGone = Math.round(
-            (this.state.endDate.getTime() - this.state.startDate.getTime()) /
-                (1000 * 3600 * 24)
-        ) + 1;
+        let daysGone =
+            Math.round(
+                (this.state.endDate.getTime() -
+                    this.state.startDate.getTime()) /
+                    (1000 * 3600 * 24)
+            ) + 1;
 
-        let {persons} = this.state;
+        let { persons } = this.state;
 
         return (
-            <div >
+            <div>
                 <div className="date-container">
                     <div>
-                    <div>Start Date</div>
-                    <DatePicker
-                        selected={this.state.startDate}
-                        onChange={this.handleStartDateChange}
-                    />
-                    </div>
-                    <div>
-
-                    <div>End Date</div>
-                    <DatePicker
-                        selected={this.state.endDate}
-                        onChange={this.handleEndDateChange}
-                        />
+                        <div>How long are you gone for?</div>
+                        <div>
+                            <DateRangePicker
+                                onChange={this.setDates}
+                                appearance="default"
+                                placeholder="Set your date"
+                                style={{ width: 280 }}
+                            />
+                        </div>
+                        <Button>test</Button>
                     </div>
                 </div>
                 <h1>Days Gone: {daysGone}</h1>
@@ -197,7 +199,7 @@ class Main extends Component {
                     </Table>
                 </div>
                 <div className="container money-form">
-                    <MoneyForm persons={persons} daysGone={daysGone}/>
+                    <MoneyForm persons={persons} daysGone={daysGone} />
                 </div>
             </div>
         );
