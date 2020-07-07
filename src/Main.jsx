@@ -14,20 +14,21 @@ class Main extends Component {
         persons: [
             {
                 name: 'Cassady',
-                daysGone: [1,2,3,4,5],
+                daysGone: [],
                 owes: 0
             },
             {
                 name: 'Cherry',
-                daysGone: [1,2,3,4,5],
+                daysGone: [],
                 owes: 0
             },
             {
                 name: 'Sam',
-                daysGone: [1,2,3,4],
+                daysGone: [],
                 owes: 0
             },
         ],
+        daysGone: 0
     };
 
     constructor(props) {
@@ -40,14 +41,29 @@ class Main extends Component {
         this.myCallback = this.myCallback.bind(this);
     }
 
-    myCallback(dataFromChild) {
-        console.log(dataFromChild);
+    myCallback(personIndex, index, isActive) {
+        let {persons} = this.state;
+
+        console.log(personIndex);
+        let shallowCopy = persons[personIndex];
+
+        isActive && !shallowCopy.daysGone.includes(index) ? 
+            shallowCopy.daysGone.push(index) 
+        :
+        shallowCopy.daysGone.splice(index, 1);
+
+        persons[personIndex] = shallowCopy;
+        this.setState({persons: persons});
+        console.log(persons);
     }
 
     componentDidMount() {
         let { endDate } = this.state;
         let set = new Date(endDate.setDate(endDate.getDate() + 5));
-        this.setState({ endDate: set });
+        let daysGone = Math.round(
+            (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
+        ) + 1;
+        this.setState({ endDate: set, daysGone: daysGone});
     }
 
     handleStartDateChange = (date) => {
@@ -64,9 +80,10 @@ class Main extends Component {
 
     renderDays() {
         let endDate = this.state.endDate.getTime();
-        let daysGone = Math.round(
-            (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
-        );
+        // let daysGone = Math.round(
+        //     (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
+        // );
+        let {daysGone} = this.state;
 
         const tableEntries = [];
         for (let i = 0; i < daysGone; i++) {
@@ -91,19 +108,15 @@ class Main extends Component {
     }
 
     renderGridBody() {
-        let { persons } = this.state;
+        let { persons, daysGone} = this.state;
         const toPrint = [];
-
-        let daysGone = Math.round(
-            (this.state.endDate.getTime() - this.state.startDate.getTime()) /
-                (1000 * 3600 * 24)
-        );
 
         let i = 0;
         const gridRows = persons.map((person) => {
             toPrint.push(
                 <GridRow
-                    key={i++}
+                    key={i++}   
+                    personIndex={i - 1}
                     callbackFromParent={this.myCallback}
                     daysGone={person.daysGone}
                     name={person.name}
@@ -153,23 +166,28 @@ class Main extends Component {
         let daysGone = Math.round(
             (this.state.endDate.getTime() - this.state.startDate.getTime()) /
                 (1000 * 3600 * 24)
-        );
+        ) + 1;
 
         let {persons} = this.state;
 
         return (
             <div >
-                <h1>Jurney</h1>
-
                 <div className="date-container">
+                    <div>
+                    <div>Start Date</div>
                     <DatePicker
                         selected={this.state.startDate}
                         onChange={this.handleStartDateChange}
                     />
+                    </div>
+                    <div>
+
+                    <div>End Date</div>
                     <DatePicker
                         selected={this.state.endDate}
                         onChange={this.handleEndDateChange}
-                    />
+                        />
+                    </div>
                 </div>
                 <h1>Days Gone: {daysGone}</h1>
                 <div className="container">

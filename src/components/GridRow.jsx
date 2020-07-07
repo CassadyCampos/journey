@@ -4,7 +4,11 @@ import Form from 'react-bootstrap/Form';
 
 class Cell extends Component { 
     state = {
-        isActive: this.props.isActive
+        isActive: this.props.isActive,
+    }
+
+    componentDidUpdate() {
+        // this.props.callToGridRow(this.state.isActive, this.props.index);
     }
 
     render() {
@@ -30,14 +34,14 @@ class GridRow extends Component {
 
         this.state={
             name: this.props.name,
-            editName: false
+            editName: false,
         }
 
         this.editName  = this.editName.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.renderEditName = this.renderEditName.bind(this);   
-        this.changeCell = this.changeCell.bind(this)
-        this.sendToParent = this.changeCell.bind(this);
+        // this.sendToParent = this.sendToParent.bind(this);
+        this.myCallback = this.myCallback.bind(this);
     }
 
     editName() {
@@ -47,6 +51,14 @@ class GridRow extends Component {
     handleNameChange(e) {
         console.log(e.target.value);
         this.setState({name: e.target.value})
+    }
+
+    myCallback(isActive, index) {
+        console.log(isActive + " : " + index);
+        let {personIndex} = this.props;
+
+        // Tell parent whos affected, for which day, and how
+        this.props.callbackFromParent(personIndex, index, isActive);
     }
 
     renderEditName() {
@@ -69,13 +81,6 @@ class GridRow extends Component {
 
     }
 
-    changeCell(index) {
-        console.log(index)
-    }
-
-    sendToParent(indices) {
-        this.props.callbackFromParent(indices);
-    }
 
     render() {
         let {daysGone, totalDays} = this.props;
@@ -87,15 +92,16 @@ class GridRow extends Component {
 
         for (let i = 0; i < totalDays; i++) {
             if (daysGone.includes(i+1)) {
-                days.push(<Cell key={i} isActive={true}></Cell>)
-                indices.push(i);
+                days.push(<Cell callToGridRow={this.myCallback}
+                    key={i} index={i} isActive={false} ></Cell>)
             } else {
-                days.push(<Cell key={i} isActive={false} ></Cell>)
+                days.push(<Cell callToGridRow={this.myCallback}
+                    key={i} index={i} isActive={true}></Cell>)
+                indices.push(i);
             }
         }
 
-        console.log(indices);
-        this.sendToParent(indices);
+        // this.sendToParent(indices, key);
 
         let i = 0;
         toPrint.push(

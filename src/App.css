@@ -1,9 +1,14 @@
 /* @import  */
 body {
-  background-image: url(./assets/imgs/jurney-bg.jpg);
+  /* background-image: url(./assets/imgs/jurney-bg.jpg); */
   background-size: cover;
 }
 
+.title {
+  font-family: 'Quicksand', sans-serif;
+  color: #eaeaea;
+  font-size: 2rem;  
+}
 
 .App {
   text-align: center;
