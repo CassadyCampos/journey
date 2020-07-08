@@ -7,29 +7,15 @@ import './assets/styles/Main.css';
 import MoneyForm from './components/MoneyForm';
 import { DateRangePicker, Button } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css'; // or ''
+import api from "./api"
 
 class Main extends Component {
     state = {
         startDate: new Date(),
         endDate: new Date(),
-        persons: [
-            {
-                name: 'Cassady',
-                daysGone: [],
-                owes: 0,
-            },
-            {
-                name: 'Cherry',
-                daysGone: [],
-                owes: 0,
-            },
-            {
-                name: 'Sam',
-                daysGone: [],
-                owes: 0,
-            },
-        ],
+        users: [],
         daysGone: 0,
+        isLoading: false,
     };
 
     constructor(props) {
@@ -42,19 +28,30 @@ class Main extends Component {
         this.myCallback = this.myCallback.bind(this);
     }
 
+    componentDidMount = async () => {
+        this.setState({ isLoading: true })
+
+        await api.getAllUsers().then(users => {
+            this.setState({
+                users: users.data.data,
+                isLoading: false,
+            })
+        })
+    }
+
     myCallback(personIndex, index, isActive) {
-        let { persons } = this.state;
+        let { users } = this.state;
 
         console.log(personIndex);
-        let shallowCopy = persons[personIndex];
+        let shallowCopy = users[personIndex];
 
         isActive && !shallowCopy.daysGone.includes(index)
             ? shallowCopy.daysGone.push(index)
             : shallowCopy.daysGone.splice(index, 1);
 
-        persons[personIndex] = shallowCopy;
-        this.setState({ persons: persons });
-        console.log(persons);
+        users[personIndex] = shallowCopy;
+        this.setState({ users: users });
+        console.log(users);
     }
 
     componentDidMount() {
@@ -69,7 +66,7 @@ class Main extends Component {
 
     setDates(dates) {
         console.log(dates);
-        let {persons} = this.state;
+        let {users} = this.state;
 
         this.setState({
             startDate: dates[0],
@@ -77,11 +74,11 @@ class Main extends Component {
             daysGone: Math.round((this.state.endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)) + 1
         }, () => {
             for(let i = 0; i < this.state.daysGone; i++) {
-                for(let j = 0; j < persons.length; j++) {
-                    persons[j].daysGone.push(i);
+                for(let j = 0; j < users.length; j++) {
+                    users[j].daysGone.push(i);
                 }
             }
-            console.log(persons);
+            console.log(users);
             this.componentDidMount();
         })
     }
@@ -112,11 +109,11 @@ class Main extends Component {
     }
 
     renderGridBody() {  
-        let { persons, daysGone } = this.state;
+        let { users, daysGone } = this.state;
         const toPrint = [];
 
         let i = 0;
-        const gridRows = persons.map((person) => {
+        const gridRows = users.map((person) => {
             toPrint.push(
                 <GridRow
                     key={i++}
@@ -153,19 +150,20 @@ class Main extends Component {
     }
 
     addPerson() {
-        let { persons } = this.state;
+        let { users } = this.state;
         let person = {
             name: 'New person',
             daysGone: [],
             owes: 0,
         };
-        const list = [...persons, person];
+        const list = [...users, person];
 
-        this.setState({ persons: list });
-        console.log(this.state.persons);
+        this.setState({ users: list });
+        console.log(this.state.users);
     }
 
     render() {
+        const {users, isLoading } = this.state
         let daysGone =
             Math.round(
                 (this.state.endDate.getTime() -
@@ -173,7 +171,7 @@ class Main extends Component {
                     (1000 * 3600 * 24)
             ) + 1;
 
-        let { persons } = this.state;
+        console.log('TCL: UsersList -> render -> users', users);
 
         return (
             <div>
@@ -199,7 +197,7 @@ class Main extends Component {
                     </Table>
                 </div>
                 <div className="container money-form">
-                    <MoneyForm persons={persons} daysGone={daysGone} />
+                    <MoneyForm users={users} daysGone={daysGone} />
                 </div>
             </div>
         );
