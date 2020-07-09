@@ -7,10 +7,6 @@ class Cell extends Component {
         isActive: this.props.isActive,
     }
 
-    componentDidUpdate() {
-        // this.props.callToGridRow(this.state.isActive, this.props.index);
-    }
-
     render() {
         let {isActive} = this.state;
 
@@ -40,7 +36,6 @@ class GridRow extends Component {
         this.editName  = this.editName.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.renderEditName = this.renderEditName.bind(this);   
-        // this.sendToParent = this.sendToParent.bind(this);
         this.myCallback = this.myCallback.bind(this);
     }
 
@@ -85,6 +80,7 @@ class GridRow extends Component {
     render() {
         let {daysGone, totalDays} = this.props;
         let {name, editName} = this.state;
+        console.log(name + "gone : " + daysGone);
 
         const toPrint = [];
         let days = [];
@@ -93,15 +89,13 @@ class GridRow extends Component {
         for (let i = 0; i < totalDays; i++) {
             if (daysGone.includes(i+1)) {
                 days.push(<Cell callToGridRow={this.myCallback}
-                    key={i} index={i} isActive={false} ></Cell>)
-            } else {
-                days.push(<Cell callToGridRow={this.myCallback}
                     key={i} index={i} isActive={true}></Cell>)
                 indices.push(i);
+            } else {
+                days.push(<Cell callToGridRow={this.myCallback}
+                    key={i} index={i} isActive={false} ></Cell>)
             }
         }
-
-        // this.sendToParent(indices, key);
 
         let i = 0;
         toPrint.push(

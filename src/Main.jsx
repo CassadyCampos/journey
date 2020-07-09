@@ -7,35 +7,75 @@ import './assets/styles/Main.css';
 import MoneyForm from './components/MoneyForm';
 import { DateRangePicker, Button } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css'; // or ''
-import api from "./api"
+import { isCompositeComponent } from 'react-dom/test-utils';
+
+class Cell extends Component { 
+    state = {
+        isActive: this.props.isActive,
+
+    }
+
+    render() {
+        let {isActive} = this.state;
+
+        let toReturn = isActive ? 
+            <td onClick={() => {this.setState({isActive: false}, console.log("notgoing"))}}
+            className="cell-going"></td>
+        : 
+            <td onClick={() => {this.setState({isActive: true}, console.log("going"))}}></td>
+
+        return toReturn;
+
+    }
+
+}
 
 class Main extends Component {
-    state = {
-        startDate: new Date(),
-        endDate: new Date(),
-        users: [],
-        daysGone: 0,
-        isLoading: false,
-    };
-
     constructor(props) {
         super(props);
+
+        let date = new Date();
+        let endDate = new Date(new Date().getTime()+(5*24*60*60*1000));
+
+        this.state = {
+            date: [date, endDate],
+            users: [{
+                name: "Cassady",
+                id: 0,
+                daysGone: [],
+                owes: 0
+            },
+            {
+                name: "Cherry",
+                id: 1,
+                daysGone: [],
+                owes: 0
+            },
+            {
+                name: "Sam",
+                id: 2,
+                daysGone: [],
+                owes: 0
+            }],
+            daysGone: 0,
+        };
+
         this.addDay = this.addDay.bind(this);
         this.rendergridBody = this.renderGridBody.bind(this);
-        this.renderDays = this.renderDays.bind(this);
+        this.renderGridHead = this.renderGridHead.bind(this);
         this.addPerson = this.addPerson.bind(this);
         this.setDates = this.setDates.bind(this);
         this.myCallback = this.myCallback.bind(this);
+        this.renderUserDays = this.renderUserDays.bind(this);
+        this.toggleDay = this.toggleDay.bind(this);
     }
 
-    componentDidMount = async () => {
-        this.setState({ isLoading: true })
+    componentDidMount() {
+        let { date } = this.state;
 
-        await api.getAllUsers().then(users => {
-            this.setState({
-                users: users.data.data,
-                isLoading: false,
-            })
+        this.setState({
+            isLoading: false,
+            daysGone: Math.ceil(Math.abs(date[0] - date[1]) / (1000 * 60 * 60 * 24))
         })
     }
 
@@ -54,36 +94,18 @@ class Main extends Component {
         console.log(users);
     }
 
-    componentDidMount() {
-        let { endDate } = this.state;
-        let set = new Date(endDate.setDate(endDate.getDate()));
-        let daysGone =
-            Math.round(
-                (endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)
-            ) + 1;
-        this.setState({ endDate: set, daysGone: daysGone });
-    }
-
     setDates(dates) {
         console.log(dates);
-        let {users} = this.state;
+        let { users } = this.state;
 
         this.setState({
-            startDate: dates[0],
-            endDate: dates[1],
-            daysGone: Math.round((this.state.endDate - this.state.startDate.getTime()) / (1000 * 3600 * 24)) + 1
+            date: dates
         }, () => {
-            for(let i = 0; i < this.state.daysGone; i++) {
-                for(let j = 0; j < users.length; j++) {
-                    users[j].daysGone.push(i);
-                }
-            }
-            console.log(users);
             this.componentDidMount();
         })
     }
 
-    renderDays() {
+    renderGridHead() {
         let { daysGone } = this.state;
 
         const tableEntries = [];
@@ -108,45 +130,46 @@ class Main extends Component {
         );
     }
 
+    toggleDay(e) {
+        console.log(e);
+        console.log("infunc")
+    }
+
+    renderUserDays(user) {
+        let toPrint = [];
+        let {daysGone} = this.state;
+
+        for (let i = 0; i < daysGone; i++) {
+            if (user.daysGone.includes(i+1)) {
+                toPrint.push(<Cell isActive={true}></Cell>)
+            } else {
+                toPrint.push(<Cell isActive={false}></Cell>)
+            }
+        }
+        return toPrint;
+    }
+
     renderGridBody() {  
-        let { users, daysGone } = this.state;
+        let { users } = this.state;
         const toPrint = [];
 
         let i = 0;
-        const gridRows = users.map((person) => {
+        const gridRows = users.map((user) => {
             toPrint.push(
-                <GridRow
-                    key={i++}
-                    personIndex={i - 1}
-                    callbackFromParent={this.myCallback}
-                    daysGone={person.daysGone}
-                    name={person.name}
-                    totalDays={daysGone}
-                ></GridRow>
-            );
-        });
-
-        toPrint.push(
-            <tr key={'AddRow'}>
-                <td>
-                    <button
-                        onClick={this.addPerson}
-                        type="button"
-                        className="btn btn-light"
-                    >
-                        Add Person
-                    </button>
-                </td>
-            </tr>
-        );
+                <tr>
+                    <td>{user.name}: {user.daysGone}</td>
+                    {this.renderUserDays(user)}
+                </tr>
+            )
+        })
 
         return toPrint;
     }
 
     addDay() {
-        let { endDate } = this.state;
-        let set = new Date(endDate.setDate(endDate.getDate() + 1));
-        this.setState({ endDate: set });
+        // let { endDate } = this.state;
+        // let set = new Date(endDate.setDate(endDate.getDate() + 1));
+        // this.setState({ endDate: set });
     }
 
     addPerson() {
@@ -163,15 +186,7 @@ class Main extends Component {
     }
 
     render() {
-        const {users, isLoading } = this.state
-        let daysGone =
-            Math.round(
-                (this.state.endDate.getTime() -
-                    this.state.startDate.getTime()) /
-                    (1000 * 3600 * 24)
-            ) + 1;
-
-        console.log('TCL: UsersList -> render -> users', users);
+        const {users, isLoading, daysGone } = this.state
 
         return (
             <div>
@@ -180,6 +195,7 @@ class Main extends Component {
                         <div>How long are you gone for?</div>
                         <div>
                             <DateRangePicker
+                                value={this.state.date}
                                 onChange={this.setDates}
                                 appearance="default"
                                 placeholder="Set your date"
@@ -192,7 +208,7 @@ class Main extends Component {
                 <h1>Days Gone: {daysGone}</h1>
                 <div className="container">
                     <Table striped bordered hover variant="light">
-                        <thead>{this.renderDays()}</thead>
+                        <thead>{this.renderGridHead()}</thead>
                         <tbody>{this.renderGridBody()}</tbody>
                     </Table>
                 </div>
