@@ -42,19 +42,19 @@ class Main extends Component {
             users: [{
                 name: "Cassady",
                 id: 0,
-                daysGone: [],
+                daysGone: [1, 2, 3, 4, 5],
                 owes: 0
             },
             {
                 name: "Cherry",
                 id: 1,
-                daysGone: [],
+                daysGone: [1, 2, 3, 4, 5],
                 owes: 0
             },
             {
                 name: "Sam",
                 id: 2,
-                daysGone: [],
+                daysGone: [1, 2, 3, 4],
                 owes: 0
             }],
             daysGone: 0,
@@ -202,7 +202,6 @@ class Main extends Component {
                                 style={{ width: 280 }}
                             />
                         </div>
-                        <Button>test</Button>
                     </div>
                 </div>
                 <h1>Days Gone: {daysGone}</h1>

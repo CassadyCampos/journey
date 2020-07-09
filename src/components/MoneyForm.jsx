@@ -25,8 +25,8 @@ export default class MoneyForm extends Component {
     
     clearState() {
         this.setState({total: 0})
-        this.props.persons.forEach(person => {
-            person.owes = 0;
+        this.props.users.forEach(user => {
+            user.owes = 0;
         })
     }
 
@@ -56,7 +56,7 @@ export default class MoneyForm extends Component {
 
     calculateSplit() {
         let pricesOwed = [];
-        let { persons, daysGone } = this.props; 
+        let { users, daysGone } = this.props; 
         let { total } = this.state;
         
         let pricePerNight = total / daysGone;
@@ -66,13 +66,13 @@ export default class MoneyForm extends Component {
         for(let i = 0; i < daysGone; i++) {
             let pplIndexPresent = [];
 
-            console.log(persons);
+            console.log(users);
 
-            for(let j = 0; j < persons.length; j++) {
+            for(let j = 0; j < users.length; j++) {
                 
                 console.log("day: " + (i));
-                // means this person was present that day
-                let res = persons[j].daysGone.includes(i+1);
+                // means this user was present that day
+                let res = users[j].daysGone.includes(i+1);
                 if (res) {
                     pplIndexPresent.push(j);
                 }
@@ -81,26 +81,26 @@ export default class MoneyForm extends Component {
             // calculate for day
             pplIndexPresent.forEach(index => {
                 // add this night calculation
-                // persons[index] =  {...persons[index],...{"owes": owes += pricePerNight / pplIndexPresent.length}};
+                // users[index] =  {...users[index],...{"owes": owes += pricePerNight / pplIndexPresent.length}};
                 // console.log(pricePerNight / pplIndexPresent.length)
                 console.log(index);
-                persons[index].owes += (pricePerNight / pplIndexPresent.length);
+                users[index].owes += (pricePerNight / pplIndexPresent.length);
             })
         }
 
-        console.log(persons);
+        console.log(users);
         // this.setState({ pricesOwed: pricesOwed });
     }
 
     renderBreakdown() {
         let renderReturn = [];
-        let {persons} = this.props;
+        let {users} = this.props;
         let {pricesOwed} = this.state;
 
-        for (let i = 0; i < persons.length; i++) {
+        for (let i = 0; i < users.length; i++) {
             renderReturn.push(
                 <div key={i}>
-                    {persons[i].name}: {persons[i].owes.toFixed(2)}
+                    {users[i].name}: {users[i].owes.toFixed(2)}
                 </div>
             )
         }
@@ -121,7 +121,7 @@ export default class MoneyForm extends Component {
    <Dropdown.Item>USD</Dropdown.Item>
    <Dropdown.Item>EUR</Dropdown.Item>
     </Dropdown>
-                           
+    <div>What is the total?</div>             
     <InputGroup style={styles} value={this.state.total} onChange={this.handleTotalChange}>
       <InputGroup.Addon>$</InputGroup.Addon>
       <Input />
