@@ -6,8 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './assets/styles/Main.css';
 import MoneyForm from './components/MoneyForm';
 import { DateRangePicker, Button } from 'rsuite';
-import 'rsuite/dist/styles/rsuite-default.css'; // or ''
-import { isCompositeComponent } from 'react-dom/test-utils';
+import 'rsuite/dist/styles/rsuite-default.css'; 
 
 class Cell extends Component { 
     state = {
@@ -15,19 +14,25 @@ class Cell extends Component {
 
     }
 
+    sendToParent() {
+        let {isActive} = this.state;
+        let {userId, day} = this.props;
+        isActive = !isActive;
+        this.setState({isActive: isActive}, 
+            () => {this.props.sendToParent(isActive, userId, ++day)}) 
+    }
+
     render() {
         let {isActive} = this.state;
 
         let toReturn = isActive ? 
-            <td onClick={() => {this.setState({isActive: false}, console.log("notgoing"))}}
+            <td onClick={() => {this.sendToParent()}}
             className="cell-going"></td>
         : 
-            <td onClick={() => {this.setState({isActive: true}, console.log("going"))}}></td>
+            <td onClick={() => {this.sendToParent()}}></td>
 
         return toReturn;
-
     }
-
 }
 
 class Main extends Component {
@@ -68,6 +73,7 @@ class Main extends Component {
         this.myCallback = this.myCallback.bind(this);
         this.renderUserDays = this.renderUserDays.bind(this);
         this.toggleDay = this.toggleDay.bind(this);
+        this.receive = this.receive.bind(this);
     }
 
     componentDidMount() {
@@ -135,15 +141,30 @@ class Main extends Component {
         console.log("infunc")
     }
 
+    receive(isActive, userId, day) {
+        console.log("receive");
+        console.log("UserId: " + userId + " is: " + isActive);
+        let {users} = this.state;
+        var index = users[userId].daysGone.indexOf(day);
+        
+        if (index !== -1) {
+            users[userId].daysGone.splice(index, 1);
+            this.setState({users: users}, () => {console.log(users); this.componentDidMount()});
+        } else {
+            users[userId].daysGone.push(day);
+            this.setState({users: users}, () => {console.log(users); this.componentDidMount()});
+        }
+    }
+
     renderUserDays(user) {
         let toPrint = [];
         let {daysGone} = this.state;
 
         for (let i = 0; i < daysGone; i++) {
             if (user.daysGone.includes(i+1)) {
-                toPrint.push(<Cell isActive={true}></Cell>)
+                toPrint.push(<Cell userId={user.id} day={i} sendToParent={this.receive} isActive={true}></Cell>)
             } else {
-                toPrint.push(<Cell isActive={false}></Cell>)
+                toPrint.push(<Cell userId={user.id} day={i} sendToParent={this.receive} isActive={false}></Cell>)
             }
         }
         return toPrint;
@@ -154,6 +175,7 @@ class Main extends Component {
         const toPrint = [];
 
         let i = 0;
+        console.log("RAN");
         const gridRows = users.map((user) => {
             toPrint.push(
                 <tr>
