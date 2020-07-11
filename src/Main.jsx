@@ -8,6 +8,7 @@ import MoneyForm from './components/MoneyForm';
 import { DateRangePicker, Button } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css'; 
 
+
 class Cell extends Component { 
     state = {
         isActive: this.props.isActive,
@@ -45,21 +46,21 @@ class Main extends Component {
         this.state = {
             date: [date, endDate],
             users: [{
-                name: "Cassady",
+                name: "Person 1",
                 id: 0,
                 daysGone: [1, 2, 3, 4, 5],
                 owes: 0
             },
             {
-                name: "Cherry",
+                name: "Person 2",
                 id: 1,
                 daysGone: [1, 2, 3, 4, 5],
                 owes: 0
             },
             {
-                name: "Sam",
+                name: "Person 3",
                 id: 2,
-                daysGone: [1, 2, 3, 4],
+                daysGone: [1, 2, 3, 4, 5],
                 owes: 0
             }],
             daysGone: 0,

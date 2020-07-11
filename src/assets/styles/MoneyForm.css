@@ -1,3 +1,10 @@
 .container-form {
     background-color: white;
 }
+
+.inputsGroup {
+    border: 1px solid red;
+    display: flex;
+    flex-direction: column;
+    display: inline-block;
+}
