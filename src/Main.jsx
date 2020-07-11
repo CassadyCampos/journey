@@ -7,6 +7,7 @@ import './assets/styles/Main.css';
 import MoneyForm from './components/MoneyForm';
 import { DateRangePicker, Button } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css'; 
+import modal from "./components/JourneyInfoModal"
 
 
 class Cell extends Component { 
@@ -176,7 +177,7 @@ class Main extends Component {
         const toPrint = [];
 
         let i = 0;
-        console.log("RAN");
+        
         const gridRows = users.map((user) => {
             toPrint.push(
                 <tr>

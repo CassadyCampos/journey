@@ -4,7 +4,7 @@ import { Grid, Col, Dropdown, Input, InputGroup, Button } from 'rsuite';
 
 const styles = {
     width: 300,
-    marginBottom: 10,
+    display: "inline-table"
 };
 
 export default class MoneyForm extends Component {
@@ -106,7 +106,7 @@ export default class MoneyForm extends Component {
                 <div className="container">
                     <div className="inputsGroup">
                         <div>What is the total?</div>
-                        <div>
+                        <div className="input-and-button">
                             <InputGroup
                                 style={styles}
                                 value={this.state.total}
@@ -122,6 +122,7 @@ export default class MoneyForm extends Component {
                                     backgroundColor: '#7a5ad8',
                                     display: 'inline-block',
                                     color: 'white',
+                                    marginLeft: '8px'
                                 }}
                             >
                                 Calculate!

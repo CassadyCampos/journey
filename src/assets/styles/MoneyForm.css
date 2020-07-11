@@ -3,8 +3,13 @@
 }
 
 .inputsGroup {
-    border: 1px solid red;
     display: flex;
     flex-direction: column;
     display: inline-block;
+}
+
+.input-and-button {
+    display: flex;
+    align-items: center;
+    /* margin: 4px; */
 }
