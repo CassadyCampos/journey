@@ -181,7 +181,7 @@ class Main extends Component {
         const gridRows = users.map((user) => {
             toPrint.push(
                 <tr>
-                    <td>{user.name}: {user.daysGone}</td>
+                    <td>{user.name}</td>
                     {this.renderUserDays(user)}
                 </tr>
             )

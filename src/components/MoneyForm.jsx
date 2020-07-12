@@ -14,6 +14,7 @@ export default class MoneyForm extends Component {
             pricesOwed: '',
             total: '',
             renderBreakdown: false,
+
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -127,14 +128,17 @@ export default class MoneyForm extends Component {
                             </Button>
                         </div>
                     </div>
-                    <div className="card">
-                        <h5 className="card-header">Split Breakdown</h5>
-                        <div className="card-body">
-                            {/* <h5 class="card-title">Special title treatment</h5> */}
-                            {renderBreakdown ? this.renderBreakdown() : ''}
+                    {renderBreakdown ? 
+                        <div className="card">
+                            <h5 className="card-header">Split Breakdown</h5>
+                            <div className="card-body">
+                                {this.renderBreakdown()}
+                            </div>
                         </div>
-                    </div>
-                    <div></div>
+                    :
+                        ''
+                    }
+                    
                 </div>
             </div>
         );
