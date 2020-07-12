@@ -34,7 +34,6 @@ export default class JourneyInfoModal extends Component {
                     <Modal.Header>
                         <Modal.Title
                             style={{
-                                fontFamily: 'Roboto Condensed, sans-serif',
                                 fontSize: '1.5rem',
                             }}
                         >
@@ -43,7 +42,6 @@ export default class JourneyInfoModal extends Component {
                     </Modal.Header>
                     <Modal.Body
                         style={{
-                            fontFamily: 'Roboto Condensed, sans-serif',
                             fontSize: '1.2rem',
                         }}
                     >

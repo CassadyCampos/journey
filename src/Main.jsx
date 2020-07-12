@@ -6,32 +6,40 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './assets/styles/Main.css';
 import MoneyForm from './components/MoneyForm';
 import { DateRangePicker, Button } from 'rsuite';
-import 'rsuite/dist/styles/rsuite-default.css'; 
-import modal from "./components/JourneyInfoModal"
+import 'rsuite/dist/styles/rsuite-default.css';
+import modal from './components/JourneyInfoModal';
 
-
-class Cell extends Component { 
+class Cell extends Component {
     state = {
         isActive: this.props.isActive,
-
-    }
+    };
 
     sendToParent() {
-        let {isActive} = this.state;
-        let {userId, day} = this.props;
+        let { isActive } = this.state;
+        let { userId, day } = this.props;
         isActive = !isActive;
-        this.setState({isActive: isActive}, 
-            () => {this.props.sendToParent(isActive, userId, ++day)}) 
+        this.setState({ isActive: isActive }, () => {
+            this.props.sendToParent(isActive, userId, ++day);
+        });
     }
 
     render() {
-        let {isActive} = this.state;
+        let { isActive } = this.state;
 
-        let toReturn = isActive ? 
-            <td onClick={() => {this.sendToParent()}}
-            className="cell-going"></td>
-        : 
-            <td onClick={() => {this.sendToParent()}}></td>
+        let toReturn = isActive ? (
+            <td
+                onClick={() => {
+                    this.sendToParent();
+                }}
+                className="cell-going"
+            ></td>
+        ) : (
+            <td
+                onClick={() => {
+                    this.sendToParent();
+                }}
+            ></td>
+        );
 
         return toReturn;
     }
@@ -42,28 +50,32 @@ class Main extends Component {
         super(props);
 
         let date = new Date();
-        let endDate = new Date(new Date().getTime()+(5*24*60*60*1000));
+        let endDate = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
+        // We need to add 1 more day
+        // endDate.setDate(endDate.getDate() + 1);
 
         this.state = {
             date: [date, endDate],
-            users: [{
-                name: "Person 1",
-                id: 0,
-                daysGone: [1, 2, 3, 4, 5],
-                owes: 0
-            },
-            {
-                name: "Person 2",
-                id: 1,
-                daysGone: [1, 2, 3, 4, 5],
-                owes: 0
-            },
-            {
-                name: "Person 3",
-                id: 2,
-                daysGone: [1, 2, 3, 4, 5],
-                owes: 0
-            }],
+            users: [
+                {
+                    name: 'Person 1',
+                    id: 0,
+                    daysGone: [1, 2, 3, 4, 5],
+                    owes: 0,
+                },
+                {
+                    name: 'Person 2',
+                    id: 1,
+                    daysGone: [1, 2, 3, 4, 5],
+                    owes: 0,
+                },
+                {
+                    name: 'Person 3',
+                    id: 2,
+                    daysGone: [1, 2, 3, 4, 5],
+                    owes: 0,
+                },
+            ],
             daysGone: 0,
         };
 
@@ -83,8 +95,10 @@ class Main extends Component {
 
         this.setState({
             isLoading: false,
-            daysGone: Math.ceil(Math.abs(date[0] - date[1]) / (1000 * 60 * 60 * 24))
-        })
+            daysGone: Math.ceil(
+                Math.abs(date[0] - date[1]) / (1000 * 60 * 60 * 24)
+            ),
+        });
     }
 
     myCallback(personIndex, index, isActive) {
@@ -106,11 +120,14 @@ class Main extends Component {
         console.log(dates);
         let { users } = this.state;
 
-        this.setState({
-            date: dates
-        }, () => {
-            this.componentDidMount();
-        })
+        this.setState(
+            {
+                date: dates,
+            },
+            () => {
+                this.componentDidMount();
+            }
+        );
     }
 
     renderGridHead() {
@@ -118,7 +135,7 @@ class Main extends Component {
 
         const tableEntries = [];
         for (let i = 0; i < daysGone; i++) {
-            tableEntries.push(<th key={i}>{i}</th>);
+            tableEntries.push(<th key={i}>{i + 1}</th>);
         }
         return (
             <tr>
@@ -140,52 +157,72 @@ class Main extends Component {
 
     toggleDay(e) {
         console.log(e);
-        console.log("infunc")
+        console.log('infunc');
     }
 
     receive(isActive, userId, day) {
-        console.log("receive");
-        console.log("UserId: " + userId + " is: " + isActive);
-        let {users} = this.state;
+        console.log('receive');
+        console.log('UserId: ' + userId + ' is: ' + isActive);
+        let { users } = this.state;
         var index = users[userId].daysGone.indexOf(day);
-        
+
         if (index !== -1) {
             users[userId].daysGone.splice(index, 1);
-            this.setState({users: users}, () => {console.log(users); this.componentDidMount()});
+            this.setState({ users: users }, () => {
+                console.log(users);
+                this.componentDidMount();
+            });
         } else {
             users[userId].daysGone.push(day);
-            this.setState({users: users}, () => {console.log(users); this.componentDidMount()});
+            this.setState({ users: users }, () => {
+                console.log(users);
+                this.componentDidMount();
+            });
         }
     }
 
     renderUserDays(user) {
         let toPrint = [];
-        let {daysGone} = this.state;
+        let { daysGone } = this.state;
 
         for (let i = 0; i < daysGone; i++) {
-            if (user.daysGone.includes(i+1)) {
-                toPrint.push(<Cell userId={user.id} day={i} sendToParent={this.receive} isActive={true}></Cell>)
+            if (user.daysGone.includes(i + 1)) {
+                toPrint.push(
+                    <Cell
+                        userId={user.id}
+                        day={i}
+                        sendToParent={this.receive}
+                        isActive={true}
+                    ></Cell>
+                );
             } else {
-                toPrint.push(<Cell userId={user.id} day={i} sendToParent={this.receive} isActive={false}></Cell>)
+                toPrint.push(
+                    <Cell
+                        userId={user.id}
+                        day={i}
+                        sendToParent={this.receive}
+                        isActive={false}
+                    ></Cell>
+                );
             }
         }
         return toPrint;
     }
 
-    renderGridBody() {  
+    renderGridBody() {
         let { users } = this.state;
         const toPrint = [];
 
         let i = 0;
-        
+
         const gridRows = users.map((user) => {
             toPrint.push(
                 <tr>
                     <td>{user.name}</td>
                     {this.renderUserDays(user)}
                 </tr>
-            )
-        })
+            );
+        });
 
         return toPrint;
     }
@@ -210,13 +247,20 @@ class Main extends Component {
     }
 
     render() {
-        const {users, isLoading, daysGone } = this.state
+        const { users, isLoading, daysGone } = this.state;
 
         return (
             <div>
                 <div className="date-container">
                     <div>
-                        <div>How long are you gone for?</div>
+                        <div
+                            style={{
+                                margin: '8px 0 8px 0',
+                                fontSize: '1.3rem',
+                            }}
+                        >
+                            How long are you gone for?
+                        </div>
                         <div>
                             <DateRangePicker
                                 value={this.state.date}
@@ -228,7 +272,22 @@ class Main extends Component {
                         </div>
                     </div>
                 </div>
-                <h1>Days Gone: {daysGone}</h1>
+
+                {!isNaN(daysGone) ?                 <div
+                    style={{
+                        margin: '8px 0 8px 0',
+                        fontSize: '1.3rem',
+                    }}
+                >
+                    Your trip lasts {daysGone} days
+                </div> :                 <div
+                    style={{
+                        margin: '8px 0 8px 0',
+                        fontSize: '1.3rem',
+                    }}
+                >
+                    Enter your trip dates!
+                </div> }
                 <div className="container">
                     <Table striped bordered hover variant="light">
                         <thead>{this.renderGridHead()}</thead>

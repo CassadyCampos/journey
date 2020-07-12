@@ -105,7 +105,10 @@ export default class MoneyForm extends Component {
             <div className="container-form">
                 <div className="container">
                     <div className="inputsGroup">
-                        <div>What is the total?</div>
+                        <div                     style={{
+                        margin: '8px 0 8px 0',
+                        fontSize: '1.3rem'
+                    }}>What is the total?</div>
                         <div className="input-and-button">
                             <InputGroup
                                 style={styles}
@@ -138,7 +141,6 @@ export default class MoneyForm extends Component {
                     :
                         ''
                     }
-                    
                 </div>
             </div>
         );
