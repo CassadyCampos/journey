@@ -3,7 +3,6 @@ import '../assets/styles/MoneyForm.css';
 import { Grid, Col, Dropdown, Input, InputGroup, Button } from 'rsuite';
 
 const styles = {
-    width: 300,
     display: "inline-table"
 };
 
@@ -120,12 +119,11 @@ export default class MoneyForm extends Component {
                                 onClick={this.handleSubmit}
                                 style={{
                                     backgroundColor: '#7a5ad8',
-                                    display: 'inline-block',
                                     color: 'white',
                                     marginLeft: '8px'
                                 }}
                             >
-                                Calculate!
+                                GO!
                             </Button>
                         </div>
                     </div>
