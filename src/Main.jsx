@@ -230,6 +230,7 @@ class Main extends Component {
         let daysGone = Math.ceil(
             Math.abs(startDate - endDate) / (1000 * 60 * 60 * 24)
         )
+        
         // We can assume that by adding a day, each person will be present
         users.forEach((user) => {
             user.daysGone.push(daysGone)

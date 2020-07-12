@@ -132,7 +132,7 @@ export default class MoneyForm extends Component {
                         </div>
                     </div>
                     {renderBreakdown ? 
-                        <div className="card">
+                        <div style={{marginTop: '8px'}}className="card">
                             <h5 className="card-header">Split Breakdown</h5>
                             <div className="card-body">
                                 {this.renderBreakdown()}
