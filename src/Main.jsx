@@ -90,14 +90,16 @@ class Main extends Component {
         this.receive = this.receive.bind(this);
     }
 
+
     componentDidMount() {
         let { date } = this.state;
-
+        let daysGone = Math.ceil(
+            Math.abs(date[0] - date[1]) / (1000 * 60 * 60 * 24)
+        )
+        console.log("Gone: " + daysGone + "days");
         this.setState({
             isLoading: false,
-            daysGone: Math.ceil(
-                Math.abs(date[0] - date[1]) / (1000 * 60 * 60 * 24)
-            ),
+            daysGone: daysGone,
         });
     }
 
@@ -141,15 +143,9 @@ class Main extends Component {
             <tr>
                 <th>#</th>
                 {tableEntries}
-                <th>
+                <th style={{maxWidth: '1rem', padding: '1px'}} onClick={this.addDay} >
                     {' '}
-                    <button
-                        onClick={this.addDay}
-                        type="button"
-                        className="btn btn-light"
-                    >
-                        Add Day
-                    </button>
+                    <div className="btn btn-light">+</div>
                 </th>
             </tr>
         );
@@ -228,9 +224,22 @@ class Main extends Component {
     }
 
     addDay() {
-        // let { endDate } = this.state;
-        // let set = new Date(endDate.setDate(endDate.getDate() + 1));
-        // this.setState({ endDate: set });
+        let { date, users } = this.state;
+        let startDate = date[0];
+        let endDate = new Date(date[1].getTime() + 1 * 24 * 60 * 60 * 1000);
+        let daysGone = Math.ceil(
+            Math.abs(startDate - endDate) / (1000 * 60 * 60 * 24)
+        )
+        // We can assume that by adding a day, each person will be present
+        users.forEach((user) => {
+            user.daysGone.push(daysGone)
+        })
+        
+        this.setState({
+            date: [startDate, endDate],
+            daysGone: daysGone,
+            users: users
+        });
     }
 
     addPerson() {
@@ -273,21 +282,25 @@ class Main extends Component {
                     </div>
                 </div>
 
-                {!isNaN(daysGone) ?                 <div
-                    style={{
-                        margin: '8px 0 8px 0',
-                        fontSize: '1.3rem',
-                    }}
-                >
-                    Your trip lasts {daysGone} days
-                </div> :                 <div
-                    style={{
-                        margin: '8px 0 8px 0',
-                        fontSize: '1.3rem',
-                    }}
-                >
-                    Enter your trip dates!
-                </div> }
+                {!isNaN(daysGone) ? (
+                    <div
+                        style={{
+                            margin: '8px 0 8px 0',
+                            fontSize: '1.3rem',
+                        }}
+                    >
+                        Your trip lasts {daysGone} days
+                    </div>
+                ) : (
+                    <div
+                        style={{
+                            margin: '8px 0 8px 0',
+                            fontSize: '1.3rem',
+                        }}
+                    >
+                        Enter your trip dates!
+                    </div>
+                )}
                 <div className="container">
                     <Table striped bordered hover variant="light">
                         <thead>{this.renderGridHead()}</thead>
