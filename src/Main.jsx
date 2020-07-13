@@ -16,7 +16,7 @@ class Cell extends Component {
         this.state = {
             isActive: this.props.isActive,
         };
-
+        
         this.onActiveChange = this.onActiveChange.bind(this);
     }
 
@@ -28,6 +28,8 @@ class Cell extends Component {
         isActive = !isActive;
         day = day + 1;
         this.setState({ isActive: isActive }, () => {
+
+            console.log("userId: " +  userId + " on day: " + day)
             this.props.onActiveChange(isActive, userId, day);
         });
     }
@@ -62,19 +64,19 @@ class Main extends Component {
             users: [
                 {
                     name: 'Person 1',
-                    id: 1,
+                    id: 0,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
                 {
                     name: 'Person 2',
-                    id: 2,
+                    id: 1,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
                 {
                     name: 'Person 3',
-                    id: 3,
+                    id: 2,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
@@ -148,7 +150,10 @@ class Main extends Component {
         console.log('UserId: ' + userId + ' is: ' + isActive);
         let { users } = this.state;
         console.log(users); 
+        console.log(users[userId])
+        // USER ID IS NOT THE INDEX l 0 l
         console.log("TEST2: " + users[userId].daysGone);
+        
         var index = users[userId].daysGone.indexOf(day);
 
         if (index !== -1) {
