@@ -10,16 +10,25 @@ import 'rsuite/dist/styles/rsuite-default.css';
 import modal from './components/JourneyInfoModal';
 
 class Cell extends Component {
-    state = {
-        isActive: this.props.isActive,
-    };
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            isActive: this.props.isActive,
+        };
 
-    sendToParent() {
+        this.onActiveChange = this.onActiveChange.bind(this);
+    }
+
+    onActiveChange() {
         let { isActive } = this.state;
         let { userId, day } = this.props;
+        console.log("TEST");
+        console.log("User: " + userId + " on day: " + day);
         isActive = !isActive;
+        day = day + 1;
         this.setState({ isActive: isActive }, () => {
-            this.props.sendToParent(isActive, userId, ++day);
+            this.props.onActiveChange(isActive, userId, day);
         });
     }
 
@@ -28,16 +37,12 @@ class Cell extends Component {
 
         let toReturn = isActive ? (
             <td
-                onClick={() => {
-                    this.sendToParent();
-                }}
+                onClick={this.onActiveChange}
                 className="cell-going"
             ></td>
         ) : (
             <td
-                onClick={() => {
-                    this.sendToParent();
-                }}
+                onClick={this.onActiveChange}
             ></td>
         );
 
@@ -51,27 +56,25 @@ class Main extends Component {
 
         let date = new Date();
         let endDate = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
-        // We need to add 1 more day
-        // endDate.setDate(endDate.getDate() + 1);
 
         this.state = {
             date: [date, endDate],
             users: [
                 {
                     name: 'Person 1',
-                    id: 0,
-                    daysGone: [1, 2, 3, 4, 5],
-                    owes: 0,
-                },
-                {
-                    name: 'Person 2',
                     id: 1,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
                 {
-                    name: 'Person 3',
+                    name: 'Person 2',
                     id: 2,
+                    daysGone: [1, 2, 3, 4, 5],
+                    owes: 0,
+                },
+                {
+                    name: 'Person 3',
+                    id: 3,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
@@ -84,44 +87,22 @@ class Main extends Component {
         this.renderGridHead = this.renderGridHead.bind(this);
         this.addPerson = this.addPerson.bind(this);
         this.setDates = this.setDates.bind(this);
-        this.myCallback = this.myCallback.bind(this);
         this.renderUserDays = this.renderUserDays.bind(this);
-        this.toggleDay = this.toggleDay.bind(this);
         this.receive = this.receive.bind(this);
     }
-
 
     componentDidMount() {
         let { date } = this.state;
         let daysGone = Math.ceil(
             Math.abs(date[0] - date[1]) / (1000 * 60 * 60 * 24)
-        )
-        console.log("Gone: " + daysGone + "days");
+        );
+
         this.setState({
-            isLoading: false,
             daysGone: daysGone,
         });
     }
 
-    myCallback(personIndex, index, isActive) {
-        let { users } = this.state;
-
-        console.log(personIndex);
-        let shallowCopy = users[personIndex];
-
-        isActive && !shallowCopy.daysGone.includes(index)
-            ? shallowCopy.daysGone.push(index)
-            : shallowCopy.daysGone.splice(index, 1);
-
-        users[personIndex] = shallowCopy;
-        this.setState({ users: users });
-        console.log(users);
-    }
-
     setDates(dates) {
-        console.log(dates);
-        let { users } = this.state;
-
         this.setState(
             {
                 date: dates,
@@ -143,23 +124,31 @@ class Main extends Component {
             <tr>
                 <th>#</th>
                 {tableEntries}
-                <th style={{maxWidth: '1rem', padding: '1px'}} onClick={this.addDay} >
+                <th
+                    style={{ maxWidth: '1rem', padding: '1px' }}
+                    onClick={this.addDay}
+                >
                     {' '}
-                    <div className="btn btn-light">+</div>
+                    <div
+                        style={{
+                            border: '1px solid #dee2e6',
+                            boxShadow: '#7a5ad8 0 5px 0 0',
+                        }}
+                        className="btn "
+                    >
+                        +
+                    </div>
                 </th>
             </tr>
         );
     }
 
-    toggleDay(e) {
-        console.log(e);
-        console.log('infunc');
-    }
-
     receive(isActive, userId, day) {
-        console.log('receive');
+        console.log('received');
         console.log('UserId: ' + userId + ' is: ' + isActive);
         let { users } = this.state;
+        console.log(users); 
+        console.log("TEST2: " + users[userId].daysGone);
         var index = users[userId].daysGone.indexOf(day);
 
         if (index !== -1) {
@@ -180,6 +169,8 @@ class Main extends Component {
     renderUserDays(user) {
         let toPrint = [];
         let { daysGone } = this.state;
+        console.log(user);
+
 
         for (let i = 0; i < daysGone; i++) {
             if (user.daysGone.includes(i + 1)) {
@@ -187,7 +178,7 @@ class Main extends Component {
                     <Cell
                         userId={user.id}
                         day={i}
-                        sendToParent={this.receive}
+                        onActiveChange={this.receive}
                         isActive={true}
                     ></Cell>
                 );
@@ -196,7 +187,7 @@ class Main extends Component {
                     <Cell
                         userId={user.id}
                         day={i}
-                        sendToParent={this.receive}
+                        onActiveChange={this.receive}
                         isActive={false}
                     ></Cell>
                 );
@@ -220,6 +211,23 @@ class Main extends Component {
             );
         });
 
+        toPrint.push(
+            <tr>
+                <th>
+                    <td
+                        onClick={this.addPerson}
+                        style={{
+                            border: '1px solid #dee2e6',
+                            boxShadow: '#7a5ad8 0 5px 0 0',
+                        }}
+                        className="btn "
+                    >
+                        Add Person
+                    </td>
+                </th>
+            </tr>
+        );
+
         return toPrint;
     }
 
@@ -229,31 +237,40 @@ class Main extends Component {
         let endDate = new Date(date[1].getTime() + 1 * 24 * 60 * 60 * 1000);
         let daysGone = Math.ceil(
             Math.abs(startDate - endDate) / (1000 * 60 * 60 * 24)
-        )
-        
+        );
+
         // We can assume that by adding a day, each person will be present
         users.forEach((user) => {
-            user.daysGone.push(daysGone)
-        })
-        
+            user.daysGone.push(daysGone);
+        });
+
         this.setState({
             date: [startDate, endDate],
             daysGone: daysGone,
-            users: users
+            users: users,
         });
     }
 
     addPerson() {
-        let { users } = this.state;
+        let { users, daysGone } = this.state;
+        let newId = users[users.length - 1].id + 1;
+        let personDaysGone = [];
+        for(let i = 0; i < daysGone + 1; i++ ) {
+            personDaysGone.push(i);
+        }
+
         let person = {
-            name: 'New person',
-            daysGone: [],
+            name: 'New person ' + newId,
+            id: newId,
+            daysGone: personDaysGone,
             owes: 0,
         };
+
         const list = [...users, person];
 
-        this.setState({ users: list });
-        console.log(this.state.users);
+        this.setState({ users: list }, () => {
+            console.log(this.state.users)
+        })
     }
 
     render() {
