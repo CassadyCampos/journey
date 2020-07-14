@@ -22,7 +22,6 @@ export default class MoneyForm extends Component {
     }
 
     clearState() {
-        this.setState({ total: 0 });
         this.props.users.forEach((user) => {
             user.owes = 0;
         });
@@ -53,7 +52,6 @@ export default class MoneyForm extends Component {
     }
 
     calculateSplit() {
-        let pricesOwed = [];
         let { users, daysGone } = this.props;
         let { total } = this.state;
 

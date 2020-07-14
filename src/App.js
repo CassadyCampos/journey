@@ -1,10 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Main from './Main';
 import JourneyInfoModal from './components/JourneyInfoModal';
-import { Modal, Button, ButtonToolbar } from 'rsuite';
 
 class App extends Component {
     constructor(props) {

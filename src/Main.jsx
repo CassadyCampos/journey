@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
-import DatePicker from 'react-datepicker';
-import GridRow from './components/GridRow';
 import 'react-datepicker/dist/react-datepicker.css';
 import './assets/styles/Main.css';
 import MoneyForm from './components/MoneyForm';
-import { DateRangePicker, Button } from 'rsuite';
+import { DateRangePicker, Button, Icon } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css';
-import modal from './components/JourneyInfoModal';
 
 class Cell extends Component {
     constructor(props) {
@@ -22,15 +19,11 @@ class Cell extends Component {
 
     onActiveChange() {
         let { isActive } = this.state;
-        let { userId, day } = this.props;
-        console.log("TEST");
-        console.log("User: " + userId + " on day: " + day);
+        let { userIndex, day } = this.props;
         isActive = !isActive;
         day = day + 1;
         this.setState({ isActive: isActive }, () => {
-
-            console.log("userId: " +  userId + " on day: " + day)
-            this.props.onActiveChange(isActive, userId, day);
+            this.props.onActiveChange(userIndex, day);
         });
     }
 
@@ -64,19 +57,19 @@ class Main extends Component {
             users: [
                 {
                     name: 'Person 1',
-                    id: 0,
+                    index: 0,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
                 {
                     name: 'Person 2',
-                    id: 1,
+                    index: 1,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
                 {
                     name: 'Person 3',
-                    id: 2,
+                    index: 2,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
                 },
@@ -85,9 +78,10 @@ class Main extends Component {
         };
 
         this.addDay = this.addDay.bind(this);
-        this.rendergridBody = this.renderGridBody.bind(this);
+        this.renderGridBody = this.renderGridBody.bind(this);
         this.renderGridHead = this.renderGridHead.bind(this);
         this.addPerson = this.addPerson.bind(this);
+        this.editName = this.editName.bind(this);
         this.setDates = this.setDates.bind(this);
         this.renderUserDays = this.renderUserDays.bind(this);
         this.receive = this.receive.bind(this);
@@ -113,6 +107,10 @@ class Main extends Component {
                 this.componentDidMount();
             }
         );
+    }
+
+    editName(user) {
+        console.log(user);
     }
 
     renderGridHead() {
@@ -145,27 +143,19 @@ class Main extends Component {
         );
     }
 
-    receive(isActive, userId, day) {
-        console.log('received');
-        console.log('UserId: ' + userId + ' is: ' + isActive);
+    receive(userIndex, day) {
         let { users } = this.state;
-        console.log(users); 
-        console.log(users[userId])
-        // USER ID IS NOT THE INDEX l 0 l
-        console.log("TEST2: " + users[userId].daysGone);
-        
-        var index = users[userId].daysGone.indexOf(day);
 
-        if (index !== -1) {
-            users[userId].daysGone.splice(index, 1);
+        var indexOfDay = users[userIndex].daysGone.indexOf(day);
+
+        if (indexOfDay !== -1) {
+            users[userIndex].daysGone.splice(indexOfDay, 1);
             this.setState({ users: users }, () => {
-                console.log(users);
                 this.componentDidMount();
             });
         } else {
-            users[userId].daysGone.push(day);
+            users[userIndex].daysGone.push(day);
             this.setState({ users: users }, () => {
-                console.log(users);
                 this.componentDidMount();
             });
         }
@@ -174,14 +164,12 @@ class Main extends Component {
     renderUserDays(user) {
         let toPrint = [];
         let { daysGone } = this.state;
-        console.log(user);
-
 
         for (let i = 0; i < daysGone; i++) {
             if (user.daysGone.includes(i + 1)) {
                 toPrint.push(
                     <Cell
-                        userId={user.id}
+                        userIndex={user.index}
                         day={i}
                         onActiveChange={this.receive}
                         isActive={true}
@@ -190,7 +178,7 @@ class Main extends Component {
             } else {
                 toPrint.push(
                     <Cell
-                        userId={user.id}
+                        userIndex={user.index}
                         day={i}
                         onActiveChange={this.receive}
                         isActive={false}
@@ -210,7 +198,8 @@ class Main extends Component {
         const gridRows = users.map((user) => {
             toPrint.push(
                 <tr>
-                    <td>{user.name}</td>
+                    <td onClick={() => {this.editName(user)}}>{user.name}
+                    </td>
                     {this.renderUserDays(user)}
                 </tr>
             );
@@ -258,7 +247,7 @@ class Main extends Component {
 
     addPerson() {
         let { users, daysGone } = this.state;
-        let newId = users[users.length - 1].id + 1;
+        let newId = users[users.length - 1].index + 1;
         let personDaysGone = [];
         for(let i = 0; i < daysGone + 1; i++ ) {
             personDaysGone.push(i);
@@ -266,16 +255,14 @@ class Main extends Component {
 
         let person = {
             name: 'New person ' + newId,
-            id: newId,
+            index: newId,
             daysGone: personDaysGone,
             owes: 0,
         };
 
         const list = [...users, person];
 
-        this.setState({ users: list }, () => {
-            console.log(this.state.users)
-        })
+        this.setState({ users: list });
     }
 
     render() {
