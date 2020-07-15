@@ -27,7 +27,7 @@ export default class JourneyInfoModal extends Component {
                 </ButtonToolbar>
 
                 <Modal
-                    className="w-100 p-3"
+                    className="w-75 p-3"
                     show={this.state.show}
                     onHide={this.close}
                 >
