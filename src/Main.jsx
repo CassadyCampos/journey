@@ -5,15 +5,17 @@ import './assets/styles/Main.css';
 import MoneyForm from './components/MoneyForm';
 import { DateRangePicker, Button, Icon } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css';
+import img3 from './assets/imgs/icons8-delete-bin-50.png';
+import img4 from './assets/imgs/icons8-edit-50.png';
 
 class Cell extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             isActive: this.props.isActive,
         };
-        
+
         this.onActiveChange = this.onActiveChange.bind(this);
     }
 
@@ -31,14 +33,9 @@ class Cell extends Component {
         let { isActive } = this.state;
 
         let toReturn = isActive ? (
-            <td
-                onClick={this.onActiveChange}
-                className="cell-going"
-            ></td>
+            <td onClick={this.onActiveChange} className="cell-going"></td>
         ) : (
-            <td
-                onClick={this.onActiveChange}
-            ></td>
+            <td onClick={this.onActiveChange}></td>
         );
 
         return toReturn;
@@ -60,18 +57,21 @@ class Main extends Component {
                     index: 0,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
+                    isEditing: false,
                 },
                 {
                     name: 'Person 2',
                     index: 1,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
+                    isEditing: false,
                 },
                 {
                     name: 'Person 3',
                     index: 2,
                     daysGone: [1, 2, 3, 4, 5],
                     owes: 0,
+                    isEditing: false,
                 },
             ],
             daysGone: 0,
@@ -111,6 +111,13 @@ class Main extends Component {
 
     editName(user) {
         console.log(user);
+        let { users } = this.state;
+        for (let i = 0; i < users.length; i++) {
+            if (user.index == users[i].index) {
+                users[i].isEditing = true;
+            }
+        }
+        this.setState({ users: users });
     }
 
     renderGridHead() {
@@ -198,8 +205,33 @@ class Main extends Component {
         const gridRows = users.map((user) => {
             toPrint.push(
                 <tr>
-                    <td onClick={() => {this.editName(user)}}>{user.name}
-                    </td>
+                    {user.isEditing ? (
+                        <td>
+                            <input></input>
+                        </td>
+                    ) : (
+                        <td>
+                            {user.name}
+                            <img
+                                style={{
+                                    height: '24px',
+                                    width: '24px',
+                                }}
+                                src={img3}
+                            />{' '}
+                            <img
+                                onClick={() => {
+                                    this.editName(user);
+                                }}
+                                style={{
+                                    height: '24px',
+                                    width: '24px',
+                                }}
+                                src={img4}
+                            />{' '}
+                        </td>
+                    )}
+
                     {this.renderUserDays(user)}
                 </tr>
             );
@@ -249,7 +281,7 @@ class Main extends Component {
         let { users, daysGone } = this.state;
         let newId = users[users.length - 1].index + 1;
         let personDaysGone = [];
-        for(let i = 0; i < daysGone + 1; i++ ) {
+        for (let i = 0; i < daysGone + 1; i++) {
             personDaysGone.push(i);
         }
 
@@ -269,56 +301,74 @@ class Main extends Component {
         const { users, isLoading, daysGone } = this.state;
 
         return (
-            <div>
-                <div className="date-container">
-                    <div>
-                        <div
-                            style={{
-                                margin: '8px 0 8px 0',
-                                fontSize: '1.3rem',
-                            }}
-                        >
-                            How long are you gone for?
-                        </div>
-                        <div>
-                            <DateRangePicker
-                                value={this.state.date}
-                                onChange={this.setDates}
-                                appearance="default"
-                                placeholder="Set your date"
-                                style={{ width: 280 }}
-                            />
+            <div className="container main-container">
+                <div className="row">
+                    <div className="col">
+                        <div className="card">
+                            <div className="card-header">Basic Info</div>
+                            <div className="card-body">
+                                <div className="date-container">
+                                    <div>
+                                        <div
+                                            style={{
+                                                margin: '8px 0 8px 0',
+                                                fontSize: '1.3rem',
+                                            }}
+                                        >
+                                            How long are you gone for?
+                                        </div>
+                                        <div>
+                                            <DateRangePicker
+                                                value={this.state.date}
+                                                onChange={this.setDates}
+                                                appearance="default"
+                                                placeholder="Set your date"
+                                                style={{ width: 280 }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="container money-form">
+                                    <MoneyForm
+                                        users={users}
+                                        daysGone={daysGone}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div className="col">
+                        <div className="card">
+                            <div className="card-header">Trip Details</div>
+                            <div className="card-body">
+                            {!isNaN(daysGone) ? (
+                                    <div
+                                        style={{
+                                            margin: '8px 0 8px 0',
+                                            fontSize: '1.3rem',
+                                        }}
+                                    >
+                                        Your trip lasts {daysGone} days
+                                    </div>
+                                ) : (
+                                    <div
+                                        style={{
+                                            margin: '8px 0 8px 0',
+                                            fontSize: '1.3rem',
+                                        }}
+                                    >
+                                        Enter your trip dates!
+                                    </div>
+                                )}
+         
+                            <Table striped bordered hover variant="light">
+                                <thead>{this.renderGridHead()}</thead>
+                                <tbody>{this.renderGridBody()}</tbody>
+                            </Table>
 
-                {!isNaN(daysGone) ? (
-                    <div
-                        style={{
-                            margin: '8px 0 8px 0',
-                            fontSize: '1.3rem',
-                        }}
-                    >
-                        Your trip lasts {daysGone} days
+                        </div>
+                        </div>
                     </div>
-                ) : (
-                    <div
-                        style={{
-                            margin: '8px 0 8px 0',
-                            fontSize: '1.3rem',
-                        }}
-                    >
-                        Enter your trip dates!
-                    </div>
-                )}
-                <div className="container">
-                    <Table striped bordered hover variant="light">
-                        <thead>{this.renderGridHead()}</thead>
-                        <tbody>{this.renderGridBody()}</tbody>
-                    </Table>
-                </div>
-                <div className="container money-form">
-                    <MoneyForm users={users} daysGone={daysGone} />
                 </div>
             </div>
         );

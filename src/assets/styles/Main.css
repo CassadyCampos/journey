@@ -10,3 +10,8 @@
 .main {
   background-color: white;
 }
+
+.main-container {
+  display: flex;
+  justify-content: space-evenly;
+}
