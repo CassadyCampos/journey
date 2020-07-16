@@ -132,7 +132,7 @@ class Main extends Component {
                 <th>#</th>
                 {tableEntries}
                 <th
-                    style={{ maxWidth: '1rem', padding: '1px' }}
+                    style={{ padding: '1px' }}
                     onClick={this.addDay}
                 >
                     {' '}
@@ -303,7 +303,7 @@ class Main extends Component {
         return (
             <div className="container main-container">
                 <div className="row">
-                    <div className="col">
+                    <div className="col-lg">
                         <div className="card">
                             <div className="card-header">Basic Info</div>
                             <div className="card-body">
@@ -337,7 +337,7 @@ class Main extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col">
+                    <div className="col-lg">
                         <div className="card">
                             <div className="card-header">Trip Details</div>
                             <div className="card-body">
